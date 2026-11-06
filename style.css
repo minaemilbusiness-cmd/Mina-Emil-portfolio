@@ -1274,3 +1274,14 @@ img {
         transition-duration: .01ms !important;
     }
 }
+
+/* JFOID IMAGE */
+
+.about-illustration-image {
+    position: relative;
+    z-index: 1;
+    width: 155px;
+    height: 155px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(214,160,82,.3));
+}
