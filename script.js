@@ -1,31 +1,49 @@
-
 // MOBILE MENU
 
 const menuToggle = document.getElementById("menuToggle");
 const nav = document.getElementById("nav");
 
-menuToggle.addEventListener("click", () => {
-    nav.classList.toggle("open");
+if (menuToggle && nav) {
 
-    const icon = menuToggle.querySelector("i");
+    menuToggle.addEventListener("click", () => {
 
-    if (nav.classList.contains("open")) {
-        icon.classList.replace("fa-bars", "fa-xmark");
-    } else {
-        icon.classList.replace("fa-xmark", "fa-bars");
-    }
-});
+        nav.classList.toggle("open");
+
+        const icon = menuToggle.querySelector("i");
+        const isOpen = nav.classList.contains("open");
+
+        if (icon) {
+            icon.classList.toggle("fa-bars", !isOpen);
+            icon.classList.toggle("fa-xmark", isOpen);
+        }
+
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+
+    });
+
+}
 
 
 // CLOSE MENU AFTER CLICK
 
 document.querySelectorAll(".nav a").forEach(link => {
+
     link.addEventListener("click", () => {
+
+        if (!nav || !menuToggle) return;
+
         nav.classList.remove("open");
 
         const icon = menuToggle.querySelector("i");
-        icon.classList.replace("fa-xmark", "fa-bars");
+
+        if (icon) {
+            icon.classList.replace("fa-xmark", "fa-bars");
+        }
+
+        menuToggle.setAttribute("aria-expanded", "false");
+
     });
+
 });
 
 
@@ -46,23 +64,33 @@ const words = [
 let wordIndex = 0;
 
 function changeWord() {
+
+    if (!changingText) return;
+
     changingText.style.animation = "none";
 
-    // Restart animation
     void changingText.offsetWidth;
 
     wordIndex = (wordIndex + 1) % words.length;
 
     changingText.textContent = words[wordIndex];
+
     changingText.style.animation = "textReveal .5s ease";
+
 }
 
-setInterval(changeWord, 2400);
+if (changingText) {
+    setInterval(changeWord, 2400);
+}
 
 
 // CURRENT YEAR
 
-document.getElementById("year").textContent = new Date().getFullYear();
+const yearElement = document.getElementById("year");
+
+if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+}
 
 
 // SCROLL REVEAL ANIMATION
@@ -75,20 +103,37 @@ revealElements.forEach(element => {
     element.classList.add("reveal");
 });
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-        }
-    });
-}, {
-    threshold: 0.12
-});
+if ("IntersectionObserver" in window) {
 
-revealElements.forEach(element => {
-    observer.observe(element);
-});
+    const observer = new IntersectionObserver((entries) => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                entry.target.classList.add("visible");
+
+                observer.unobserve(entry.target);
+
+            }
+
+        });
+
+    }, {
+        threshold: 0.12
+    });
+
+    revealElements.forEach(element => {
+        observer.observe(element);
+    });
+
+} else {
+
+    revealElements.forEach(element => {
+        element.classList.add("visible");
+    });
+
+}
 
 
 // ACTIVE NAVIGATION
@@ -96,32 +141,52 @@ revealElements.forEach(element => {
 const sections = document.querySelectorAll("main section[id]");
 const navLinks = document.querySelectorAll(".nav a");
 
-const sectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            navLinks.forEach(link => {
-                link.classList.toggle(
-                    "active",
-                    link.getAttribute("href") === "#" + entry.target.id
-                );
-            });
-        }
-    });
-}, {
-    rootMargin: "-35% 0px -55% 0px"
-});
+if ("IntersectionObserver" in window) {
 
-sections.forEach(section => {
-    sectionObserver.observe(section);
-});
+    const sectionObserver = new IntersectionObserver((entries) => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                navLinks.forEach(link => {
+
+                    link.classList.toggle(
+                        "active",
+                        link.getAttribute("href") === "#" + entry.target.id
+                    );
+
+                });
+
+            }
+
+        });
+
+    }, {
+        rootMargin: "-35% 0px -55% 0px"
+    });
+
+    sections.forEach(section => {
+        sectionObserver.observe(section);
+    });
+
+}
 
 
 // REMOVE LOADER AFTER PAGE LOAD
 
 window.addEventListener("load", () => {
+
     const loader = document.getElementById("loader");
 
-    setTimeout(() => {
-        loader.style.display = "none";
-    }, 1700);
+    if (loader) {
+
+        setTimeout(() => {
+
+            loader.style.display = "none";
+
+        }, 1700);
+
+    }
+
 });
